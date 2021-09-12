@@ -1,3 +1,5 @@
+import kotlin.reflect.KAnnotatedElement;
+
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -41,8 +43,17 @@ public class FSServer {
           while (canWork){
 
                 WatchKey key = watch.take();
-
-
+                for(WatchEvent event : key.pollEvents()){
+                    String fName =  event.context().toString();
+                    int kind = 0;
+                    if(event.kind() == StandardWatchEventKinds.ENTRY_CREATE)
+                        kind = FSMonitor.CREATE;
+                    else kind = FSMonitor.REMOVE;
+                    for (FSMonitor client: clients){
+                        client.event(fName, kind);
+                    }
+                }
+                key.reset();
           }
 
           watch.close();
