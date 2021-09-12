@@ -40,11 +40,16 @@ public class FSServer {
                   StandardWatchEventKinds.ENTRY_DELETE);
           while (canWork){
 
+                WatchKey key = watch.take();
+
+
           }
 
-
+          watch.close();
 
       }catch (IOException ex){
+
+      }catch (InterruptedException ex){
 
       }
 
